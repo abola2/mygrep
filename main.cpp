@@ -117,16 +117,16 @@ std::vector<std::string> getFileContent(const std::string& file_name)
         return lines;
     }
 
+    for (std::string line; std::getline(input, line);)
+    {
+        lines.push_back(line);
+    }
+
     if (lines.empty())
     {
         std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
         std::cerr << "\"" << file_name << "\"" << " is empty" << std::endl;
         return lines;
-    }
-
-    for (std::string line; std::getline(input, line);)
-    {
-        lines.push_back(std::move(line));
     }
 
     return lines;
