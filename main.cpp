@@ -3,6 +3,37 @@
 #include <iostream>
 #include <vector>
 
+struct enabled_flags
+{
+    bool has_flags;
+    bool line_number; //-l
+    bool case_sensitive; //-i
+    bool reverse; // -r
+};
+
+bool contains(const std::string& line,
+              const std::string& search,
+              bool ignoreCase);
+
+void simple_search();
+void get_enabled_flags(int argc, char** argv, enabled_flags* flags);
+std::vector<std::string> getFileContent(const std::string& file_name);
+void file_search(int argc, char** argv);
+
+
+int main(const int argc, char* argv[])
+{
+    if (argc > 1)
+    {
+        file_search(argc, argv);
+    }
+    else
+    {
+        simple_search();
+    }
+
+    return 0;
+}
 
 bool contains(const std::string& line,
               const std::string& search,
@@ -42,14 +73,6 @@ void simple_search()
     }
 }
 
-struct enabled_flags
-{
-    bool has_flags;
-    bool line_number; //-l
-    bool case_sensitive; //-i
-    bool reverse; // -r
-};
-
 void get_enabled_flags(const int argc, char** argv, enabled_flags* flags)
 {
     for (int i = 1; i < argc; i++)
@@ -74,27 +97,30 @@ void get_enabled_flags(const int argc, char** argv, enabled_flags* flags)
     }
 }
 
-std::pmr::vector<std::string> getFileContent(const std::string& file_name)
+std::vector<std::string> getFileContent(const std::string& file_name)
 {
-    std::pmr::vector<std::string> lines;
+    std::vector<std::string> lines;
 
     std::ifstream input{file_name};
 
-    if (input.bad())
+    if (input.bad() || input.fail())
     {
-        std::cerr << "Error opening file bad" << std::endl;
-        return lines;
-    }
-
-    if (input.fail())
-    {
-        std::cerr << "Error opening file failed" << std::endl;
+        std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
+        std::cerr << "Could not find out the size of file " << "\"" << file_name << "\"" << std::endl;
         return lines;
     }
 
     if (!input.is_open())
     {
-        std::cerr << "Couldn't read file: " << file_name << "\n";
+        std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
+        std::cerr << "Could not open file " << "\"" << file_name << "\"" << std::endl;
+        return lines;
+    }
+
+    if (lines.empty())
+    {
+        std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
+        std::cerr << "\"" << file_name << "\"" << " is empty" << std::endl;
         return lines;
     }
 
@@ -149,19 +175,4 @@ void file_search(const int argc, char** argv)
         printf("\n");
         std::printf("Occurrences of lines containing \"%s\": %i\n", search.c_str(), result_count);
     }
-}
-
-
-int main(const int argc, char* argv[])
-{
-    if (argc > 1)
-    {
-        file_search(argc, argv);
-    }
-    else
-    {
-        simple_search();
-    }
-
-    return 0;
 }
