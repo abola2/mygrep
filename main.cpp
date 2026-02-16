@@ -100,8 +100,6 @@ void get_enabled_flags(const int argc, char** argv, enabled_flags* flags)
 std::vector<std::string> getFileContent(const std::string& file_name)
 {
 
-
-
     std::vector<std::string> lines;
 
     try {
