@@ -99,33 +99,36 @@ void get_enabled_flags(const int argc, char** argv, enabled_flags* flags)
 
 std::vector<std::string> getFileContent(const std::string& file_name)
 {
+
+
+
     std::vector<std::string> lines;
 
-    std::ifstream input{file_name};
+    try {
+        std::ifstream input{file_name};
 
-    if (input.bad() || input.fail())
-    {
+        if (input.bad() || input.fail())
+        {
+            throw std::runtime_error("Could not find out the size of file " +file_name);
+        }
+
+        if (!input.is_open())
+        {
+            throw std::runtime_error("Could not open file " + file_name);
+        }
+
+        for (std::string line; std::getline(input, line);)
+        {
+            lines.push_back(line);
+        }
+
+        if (lines.empty())
+        {
+            throw std::runtime_error( file_name + " is empty");
+        }
+    } catch (const std::exception& e) {
         std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
-        std::cerr << "Could not find out the size of file " << "\"" << file_name << "\"" << std::endl;
-        return lines;
-    }
-
-    if (!input.is_open())
-    {
-        std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
-        std::cerr << "Could not open file " << "\"" << file_name << "\"" << std::endl;
-        return lines;
-    }
-
-    for (std::string line; std::getline(input, line);)
-    {
-        lines.push_back(line);
-    }
-
-    if (lines.empty())
-    {
-        std::cerr << "An exception occurred. Exception Nr. -1" << std::endl;
-        std::cerr << "\"" << file_name << "\"" << " is empty" << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return lines;
     }
 
