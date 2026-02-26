@@ -9,6 +9,7 @@ struct enabled_flags
     bool line_number; //-l
     bool case_sensitive; //-i
     bool reverse; // -r
+    bool row_count; // -o
 };
 
 bool contains(const std::string& line,
@@ -92,6 +93,12 @@ void get_enabled_flags(const int argc, char** argv, enabled_flags* flags)
             {
                 flags->reverse = true;
             }
+            unsigned long index = flag.find_last_of('o');
+            if (index != std::string::npos && index > 1)
+            {
+                flags->row_count = true;
+            }
+
             return;
         }
     }
@@ -171,7 +178,7 @@ void file_search(const int argc, char** argv)
             result_count++;
         }
     }
-    if (ef->line_number)
+    if (ef->row_count)
     {
         printf("\n");
         std::printf("Occurrences of lines containing \"%s\": %i\n", search.c_str(), result_count);
